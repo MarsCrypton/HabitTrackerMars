@@ -12,6 +12,14 @@ class Habit:
         if today not in self.days_completed:
             self.days_completed.append(today)
 
+    # def mark_today(self, index):
+    #     if 0 <= index < len(self.habits):
+    #         habit = self.habits[index]
+    #         habit.mark_today()
+    #         print(f"Привычка '{habit.name}' отмечена!")
+    #     else:
+    #         print("Неверный номер.")
+
     def progress(self):
         return len(self.days_completed)
 
@@ -64,6 +72,14 @@ class HabitTracker:
         if 0 <= index < len(self.habits):
             removed = self.habits.pop(index)
             print(f"Привычка '{removed.name}' удалена.")
+        else:
+            print("Неверный номер.")
+
+    def mark_today(self, index):
+        if 0 <= index < len(self.habits):
+            habit = self.habits[index]
+            habit.mark_today()
+            print(f"Привычка '{habit.name}' отмечена!")
         else:
             print("Неверный номер.")
 

@@ -20,13 +20,18 @@ def main():
             tracker.add_habit(name)
 
         elif choice == "2":
-            name = input("Какая привычка выполнена?: ")
-            habit = tracker.find_habit(name)
-            if habit:
-                habit.mark_today()
-                print("Отмечено!")
-            else:
-                print("Привычка не найдена.")
+            if not tracker.habits:
+                print("Нет привычек для выполнения.")
+                continue
+
+            print("Список привычек:")
+            for i, habit in enumerate(tracker.habits):
+                print(f"{i + 1}. {habit.name}")
+            try:
+                idx = int(input("Введите номер привычки для выполнения: ")) - 1
+                tracker.mark_today(idx)
+            except ValueError:
+                print("Нужно ввести число.")
 
         elif choice == "3":
             tracker.show_all()

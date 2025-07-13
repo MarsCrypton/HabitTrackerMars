@@ -1,6 +1,12 @@
 [
   {
     "name": "программирования на python",
+    "days_completed": [
+      "2025-07-13"
+    ]
+  },
+  {
+    "name": "англ язык",
     "days_completed": []
   }
 ]
