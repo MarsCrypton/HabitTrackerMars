@@ -11,6 +11,7 @@ def main():
         print("1. Добавить привычку")
         print("2. Отметить выполнение")
         print("3. Показать прогресс")
+        print("4. Удалить привычку")
         print("0. Выход")
         choice = input("Выберите действие: ")
 
@@ -29,6 +30,22 @@ def main():
 
         elif choice == "3":
             tracker.show_all()
+
+        elif choice == "4":
+            if not tracker.habits:
+                print("Нет привычек для удаления.")
+                continue
+
+            print("Список привычек:")
+            for i, habit in enumerate(tracker.habits):
+                print(f"{i + 1}. {habit.name}")
+
+            try:
+                idx = int(input("Введите номер привычки для удаления: ")) - 1
+                tracker.remove_habit_by_index(idx)
+            except ValueError:
+                print("Нужно ввести число.")
+
 
         elif choice == "0":
             tracker.save_to_file(FILENAME)

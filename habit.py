@@ -59,3 +59,11 @@ class HabitTracker:
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
             self.habits = [Habit.from_dict(item) for item in data]
+
+    def remove_habit_by_index(self, index):
+        if 0 <= index < len(self.habits):
+            removed = self.habits.pop(index)
+            print(f"Привычка '{removed.name}' удалена.")
+        else:
+            print("Неверный номер.")
+
