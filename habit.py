@@ -3,22 +3,19 @@ from datetime import date
 import os
 
 class Habit:
-    def __init__(self, name, days_completed=None):
+    def __init__(self, name, days_completed=None, goal=None):
         self.name = name
+        self.goal = goal
         self.days_completed = days_completed if days_completed else []
+
+    def is_goal_reached(self):
+        if goal == progress:
+            
 
     def mark_today(self):
         today = str(date.today())
         if today not in self.days_completed:
             self.days_completed.append(today)
-
-    # def mark_today(self, index):
-    #     if 0 <= index < len(self.habits):
-    #         habit = self.habits[index]
-    #         habit.mark_today()
-    #         print(f"Привычка '{habit.name}' отмечена!")
-    #     else:
-    #         print("Неверный номер.")
 
     def progress(self):
         return len(self.days_completed)
