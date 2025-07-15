@@ -17,7 +17,18 @@ def main():
 
         if choice == "1":
             name = input("Название привычки: ")
-            tracker.add_habit(name)
+            while True:
+                x = input("Цель (выполнений, например 10): ").strip()
+                if x == "":
+                    goal = None  # пользователь не задал цель
+                    break
+                try:
+                    goal = int(x)
+                    break
+                except ValueError:
+                    print("Ошибка: введите число или оставьте поле пустым.")
+
+            tracker.add_habit(name, goal)
 
         elif choice == "2":
             if not tracker.habits:

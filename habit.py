@@ -9,8 +9,9 @@ class Habit:
         self.days_completed = days_completed if days_completed else []
 
     def is_goal_reached(self):
-        if goal == progress:
-            
+        if self.goal is None:
+            return False
+        return self.progress() >= self.goal
 
     def mark_today(self):
         today = str(date.today())
@@ -24,22 +25,22 @@ class Habit:
         return f"{self.name}: выполнено {self.progress()} раз(а)"
     
     def to_dict(self):
-        return {"name": self.name, "days_completed": self.days_completed}
+        return {"name": self.name, "days_completed": self.days_completed,"goal":self.goal}
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data["name"], data["days_completed"])
+        return cls(data["name"], data["days_completed"],data["goal"])
     
 
 class HabitTracker:
     def __init__(self):
         self.habits = []
 
-    def add_habit(self, name):
+    def add_habit(self, name, goal=None):
         if self.find_habit(name):
             print("Привычка уже существует.")
         else:
-            self.habits.append(Habit(name))
+            self.habits.append(Habit(name, goal=goal))
 
     def find_habit(self, name):
         for habit in self.habits:
