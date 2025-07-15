@@ -22,7 +22,14 @@ class Habit:
         return len(self.days_completed)
 
     def __str__(self):
-        return f"{self.name}: выполнено {self.progress()} раз(а)"
+        if self.goal is None:
+            goal_status = "цель: не задана"
+        elif self.is_goal_reached():
+            goal_status = f"цель: {self.goal} ✅ достигнута!"
+        else:
+            x = self.goal - self.progress()
+            goal_status = f"цель: {self.goal} (осталось {x})"
+        return f"{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}"
     
     def to_dict(self):
         return {"name": self.name, "days_completed": self.days_completed,"goal":self.goal}
@@ -62,6 +69,8 @@ class HabitTracker:
     def load_from_file(self, filename):
         if not os.path.exists(filename):
             return  # Ничего не загружаем, если файл не существует
+        if os.path.getsize(filename) == 0:
+            return  # файл пустой — ничего не загружаем
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
             self.habits = [Habit.from_dict(item) for item in data]
