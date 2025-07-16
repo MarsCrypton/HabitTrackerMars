@@ -41,6 +41,7 @@ def main():
             try:
                 idx = int(input("Введите номер привычки для выполнения: ")) - 1
                 tracker.mark_today(idx)
+                tracker.save_to_file(FILENAME)
             except ValueError:
                 print("Нужно ввести число.")
 
@@ -59,6 +60,7 @@ def main():
             try:
                 idx = int(input("Введите номер привычки для удаления: ")) - 1
                 tracker.remove_habit_by_index(idx)
+                tracker.save_to_file(FILENAME)
             except ValueError:
                 print("Нужно ввести число.")
 
