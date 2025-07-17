@@ -29,6 +29,7 @@ def main():
                     print("Ошибка: введите число или оставьте поле пустым.")
 
             tracker.add_habit(name, goal)
+            tracker.save_to_file(FILENAME)
 
         elif choice == "2":
             if not tracker.habits:

@@ -29,7 +29,15 @@ class Habit:
         else:
             x = self.goal - self.progress()
             goal_status = f"цель: {self.goal} (осталось {x})"
-        return f"{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}"
+
+
+        if self.days_completed:
+            dates = "\n  - " + "\n  - ".join(self.days_completed)
+        else:
+                dates = "\n  (пока нет выполнений)"
+                
+
+        return f"{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\nДаты выполнения:{dates}"
     
     def to_dict(self):
         return {"name": self.name, "days_completed": self.days_completed,"goal":self.goal}
