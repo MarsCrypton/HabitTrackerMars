@@ -33,7 +33,7 @@ class Habit:
         for i in range(1, len(dates)):
             if dates[i] == dates[i - 1] + timedelta(days=1):
                 current_len += 1
-                current_end = dates[i]
+                # current_end = dates[i]
             else:
                 if current_len > best_len:
                     best_len = current_len
@@ -47,6 +47,42 @@ class Habit:
             best_end = dates[-1]
 
         return (best_len, best_start, best_end)
+    
+    # def get_current_streak(self):
+    #     if not self.days_completed:
+    #         return (0, None)
+    #     else:
+    #         dates = sorted([datetime.strptime(d, "%Y-%m-%d").date() for d in self.days_completed], reverse=True)
+    #         today = date.today()
+    #         streak_length = 0
+    #         start_date = None
+    #         if today in dates:
+    #             streak_length += 1
+    #             start_date = today
+    #         else:
+    #             yesterday = today - timedelta(days=1)
+
+    # --------------
+
+    def get_current_streak(self):
+        if not self.days_completed:
+            return (0, None)
+        else:
+            dates = sorted([datetime.strptime(d, "%Y-%m-%d").date() for d in self.days_completed], reverse=True)
+            today = date.today()
+            streak = 0 
+            for d in dates:
+                if d == today - timedelta(days=streak):
+                    streak += 1
+                else:
+                    break
+
+        if streak > 0:
+            start_date = today - timedelta(days=streak - 1)
+            return (streak, start_date)
+        else:
+            return (0, None)
+
 
 
     def __str__(self):
@@ -62,15 +98,22 @@ class Habit:
         if self.days_completed:
             dates = "\n  - " + "\n  - ".join(self.days_completed)
         else:
-                dates = "\n  (пока нет выполнений)"
+            dates = "\n  (пока нет выполнений)"
                 
         streak_len, streak_start, streak_end = self.get_best_streak()
-        if streak_len ==0:
+        current_len, current_start = self.get_current_streak()
+
+        if current_len == 0:
+            current_info = "📅 Текущий стрик: прерван"
+        else:
+            current_info = f"📅 Текущий стрик: {current_len} дней (с {current_start})"
+
+        if streak_len == 0:
             streak_info = "📈 Стрик: пока нет подряд выполнений"
         else:
             streak_info = f"📈 Стрик: {streak_len} дней (с {streak_start} по {streak_end})"
 
-        return f"\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}"
+        return f"\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}"
 
     
     def to_dict(self):
