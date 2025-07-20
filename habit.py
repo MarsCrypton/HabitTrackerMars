@@ -1,5 +1,5 @@
 import json
-from datetime import date
+from datetime import date,datetime, timedelta
 import os
 
 class Habit:
@@ -21,6 +21,34 @@ class Habit:
     def progress(self):
         return len(self.days_completed)
 
+    def get_best_streak(self):
+        if not self.days_completed:
+            return (0, None, None)
+        dates = sorted([datetime.strptime(d, "%Y-%m-%d").date() for d in self.days_completed])
+        dates.sort()
+
+        best_start = best_end = current_start = dates[0]
+        best_len = current_len = 1
+
+        for i in range(1, len(dates)):
+            if dates[i] == dates[i - 1] + timedelta(days=1):
+                current_len += 1
+                current_end = dates[i]
+            else:
+                if current_len > best_len:
+                    best_len = current_len
+                    best_start = current_start
+                    best_end = dates[i - 1]
+                current_len = 1
+                current_start = dates[i]
+        if current_len > best_len:
+            best_len = current_len
+            best_start = current_start
+            best_end = dates[-1]
+
+        return (best_len, best_start, best_end)
+
+
     def __str__(self):
         if self.goal is None:
             goal_status = "цель: не задана"
@@ -36,8 +64,14 @@ class Habit:
         else:
                 dates = "\n  (пока нет выполнений)"
                 
+        streak_len, streak_start, streak_end = self.get_best_streak()
+        if streak_len ==0:
+            streak_info = "📈 Стрик: пока нет подряд выполнений"
+        else:
+            streak_info = f"📈 Стрик: {streak_len} дней (с {streak_start} по {streak_end})"
 
-        return f"{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\nДаты выполнения:{dates}"
+        return f"\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}"
+
     
     def to_dict(self):
         return {"name": self.name, "days_completed": self.days_completed,"goal":self.goal}
