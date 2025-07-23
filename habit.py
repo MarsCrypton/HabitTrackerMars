@@ -47,22 +47,6 @@ class Habit:
             best_end = dates[-1]
 
         return (best_len, best_start, best_end)
-    
-    # def get_current_streak(self):
-    #     if not self.days_completed:
-    #         return (0, None)
-    #     else:
-    #         dates = sorted([datetime.strptime(d, "%Y-%m-%d").date() for d in self.days_completed], reverse=True)
-    #         today = date.today()
-    #         streak_length = 0
-    #         start_date = None
-    #         if today in dates:
-    #             streak_length += 1
-    #             start_date = today
-    #         else:
-    #             yesterday = today - timedelta(days=1)
-
-    # --------------
 
     def get_current_streak(self):
         if not self.days_completed:
@@ -83,8 +67,6 @@ class Habit:
         else:
             return (0, None)
 
-
-
     def __str__(self):
         if self.goal is None:
             goal_status = "цель: не задана"
@@ -93,6 +75,14 @@ class Habit:
         else:
             x = self.goal - self.progress()
             goal_status = f"цель: {self.goal} (осталось {x})"
+
+        progress_bar = ""
+        if self.goal and self.goal > 0:
+            bar_length  = 20
+            filled = int((self.progress() / self.goal)* bar_length )
+            empty = bar_length  - filled
+            progress_bar = f"\n📊 Прогресс: [{'█' * filled}{'░' * empty}] {self.progress()}/{self.goal}"
+
 
 
         if self.days_completed:
@@ -113,7 +103,8 @@ class Habit:
         else:
             streak_info = f"📈 Стрик: {streak_len} дней (с {streak_start} по {streak_end})"
 
-        return f"\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}"
+        return f"""\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}
+        {progress_bar}"""
 
     
     def to_dict(self):
@@ -123,7 +114,7 @@ class Habit:
     def from_dict(cls, data):
         return cls(data["name"], data["days_completed"],data["goal"])
     
-
+    
 class HabitTracker:
     def __init__(self):
         self.habits = []
