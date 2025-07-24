@@ -3,20 +3,25 @@ from datetime import date,datetime, timedelta
 import os
 
 class Habit:
-    def __init__(self, name, days_completed=None, goal=None):
+    def __init__(self, name, days_completed=None, goal=None, is_archived=False):
         self.name = name
         self.goal = goal
         self.days_completed = days_completed if days_completed else []
+        self.is_archived = is_archived
 
     def is_goal_reached(self):
         if self.goal is None:
             return False
         return self.progress() >= self.goal
 
-    def mark_today(self):
+    def mark_today(self,habit):
         today = str(date.today())
         if today not in self.days_completed:
             self.days_completed.append(today)
+
+        if habit.goal is not None and habit.progress() >= habit.goal:
+            habit.is_archived = True
+            print(f"Цель достигнута, привычка '{habit.name}' архивирована!")
 
     def progress(self):
         return len(self.days_completed)
@@ -67,6 +72,13 @@ class Habit:
         else:
             return (0, None)
 
+    def archive_habit_by_index(self, index):
+        if 0 <= index < len(self.habits):
+            self.habist[index].is_archived = True
+            print(f"Привычка '{self.habits[index].name}' архивирована.")
+        else:
+            print("Неверный номер.")
+
     def __str__(self):
         if self.goal is None:
             goal_status = "цель: не задана"
@@ -78,7 +90,7 @@ class Habit:
 
         progress_bar = ""
         if self.goal and self.goal > 0:
-            bar_length  = 20
+            bar_length  = 50
             filled = int((self.progress() / self.goal)* bar_length )
             empty = bar_length  - filled
             progress_bar = f"\n📊 Прогресс: [{'█' * filled}{'░' * empty}] {self.progress()}/{self.goal}"
@@ -108,11 +120,21 @@ class Habit:
 
     
     def to_dict(self):
-        return {"name": self.name, "days_completed": self.days_completed,"goal":self.goal}
+        return {
+            "name": self.name,
+            "days_completed": self.days_completed,
+            "goal":self.goal,
+            "is_archived": self.is_archived
+        }
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data["name"], data["days_completed"],data["goal"])
+        return cls(
+            data["name"],
+            data["days_completed", []],
+            data["goal"],
+            data["is_archived",False]
+        )
     
     
 class HabitTracker:
@@ -132,9 +154,10 @@ class HabitTracker:
         return None
 
     def show_all(self):
-        if not self.habits:
-            print("Нет привычек.")
-        for habit in self.habits:
+        active = [h for h in self.habits if not h.is_archived]
+        if not active:
+            print("Нет активных привычек.")
+        for habit in active:
             print(habit)
 
     def save_to_file(self, filename):
