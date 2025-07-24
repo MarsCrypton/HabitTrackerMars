@@ -14,14 +14,10 @@ class Habit:
             return False
         return self.progress() >= self.goal
 
-    def mark_today(self,habit):
+    def mark_today(self):
         today = str(date.today())
         if today not in self.days_completed:
             self.days_completed.append(today)
-
-        if habit.goal is not None and habit.progress() >= habit.goal:
-            habit.is_archived = True
-            print(f"Цель достигнута, привычка '{habit.name}' архивирована!")
 
     def progress(self):
         return len(self.days_completed)
@@ -131,9 +127,9 @@ class Habit:
     def from_dict(cls, data):
         return cls(
             data["name"],
-            data["days_completed", []],
-            data["goal"],
-            data["is_archived",False]
+            data.get("days_completed", []),
+            data.get("goal"),
+            data.get("is_archived",False)
         )
     
     
