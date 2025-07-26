@@ -1,5 +1,5 @@
 import json
-from datetime import date,datetime, timedelta
+from datetime import date, datetime, timedelta
 import os
 
 class Habit:
@@ -26,7 +26,6 @@ class Habit:
         if not self.days_completed:
             return (0, None, None)
         dates = sorted([datetime.strptime(d, "%Y-%m-%d").date() for d in self.days_completed])
-        dates.sort()
 
         best_start = best_end = current_start = dates[0]
         best_len = current_len = 1
@@ -68,12 +67,7 @@ class Habit:
         else:
             return (0, None)
 
-    def archive_habit_by_index(self, index):
-        if 0 <= index < len(self.habits):
-            self.habist[index].is_archived = True
-            print(f"Привычка '{self.habits[index].name}' архивирована.")
-        else:
-            print("Неверный номер.")
+
 
     def __str__(self):
         if self.goal is None:
@@ -113,7 +107,6 @@ class Habit:
 
         return f"""\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}
         {progress_bar}"""
-
     
     def to_dict(self):
         return {
@@ -182,6 +175,19 @@ class HabitTracker:
             habit = self.habits[index]
             habit.mark_today()
             print(f"Привычка '{habit.name}' отмечена!")
+        else:
+            print("Неверный номер.")
+
+    def archive_habit_by_index(self, index):
+        active = [h for h in self.habits if not h.is_archived]
+        if 0 <= index < len(active):
+            habit = active[index]
+            if habit.is_goal_reached():
+                habit.is_archived = True
+                print(f"Привычка '{habit.name}' архивирована.")
+                return True 
+            else:
+                print("Цель ещё не достигнута. Нельзя архивировать.")
         else:
             print("Неверный номер.")
 

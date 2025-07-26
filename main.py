@@ -12,6 +12,7 @@ def main():
         print("2. Отметить выполнение")
         print("3. Показать прогресс")
         print("4. Удалить привычку")
+        print("5. Архивировать привычку")
         print("0. Выход")
         choice = input("Выберите действие: ")
 
@@ -64,6 +65,19 @@ def main():
                 tracker.save_to_file(FILENAME)
             except ValueError:
                 print("Нужно ввести число.")
+
+        elif choice == "5":
+            print("Список привычек:")
+            active = [h for h in tracker.habits if not h.is_archived]
+            for i, habit in enumerate(active):
+                print(f"{i + 1}. {habit.name}")
+            try:
+                idx = int(input("Введите номер привычки для архивирования: ")) - 1
+                tracker.archive_habit_by_index(idx)
+                tracker.save_to_file(FILENAME)
+            except ValueError:
+                print("Нужно ввести число.")
+    
 
 
         elif choice == "0":
