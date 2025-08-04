@@ -3,6 +3,27 @@ from habit import HabitTracker
 FILENAME = "data.json"
 
 def main():
+    while True:
+        print("\n=== Главное меню ===")
+        print("1. Сегодня")
+        print("2. Трекер привычек")
+        print("0. Выход")
+        choice = input("Выберите действие: ")
+
+        if choice == "1":
+            pass
+
+        elif choice == "2":
+            habit_menu()
+        
+        elif choice == "0":
+            print("Выход...")
+            break
+
+        else:
+            print("Неверный ввод.")
+
+def habit_menu():
     tracker = HabitTracker()
     tracker.load_from_file(FILENAME)
 
@@ -82,7 +103,7 @@ def main():
 
         elif choice == "0":
             tracker.save_to_file(FILENAME)
-            print("Привычки сохранены. Выход...")
+            print("Привычки сохранены. Возврат в главное меню")
             break
 
         else:
