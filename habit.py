@@ -1,6 +1,13 @@
 import json
 from datetime import date, datetime, timedelta
 import os
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.progress import Progress
+from rich.progress_bar import ProgressBar
+from rich.progress import Progress, BarColumn, TextColumn
+console = Console()
 
 class Habit:
     def __init__(self, name, days_completed=None, goal=None, is_archived=False):
@@ -81,6 +88,17 @@ class Habit:
         else:
             print("Неверный номер.")
 
+    def display_rich(self):
+        if self.progress() == 0:
+            console.print(f"[dim]{self.name}[/dim]: [red]0%[/red]")
+        else:
+            with Progress("[progress.description]{task.description}",
+                BarColumn(complete_style="green", finished_style="cyan", pulse_style="none"),
+                TextColumn("[green]{task.percentage:>3.0f}%[/green]"),
+            )as progress:
+                task_id = progress.add_task(f"{self.name}", total=self.goal)
+                progress.update(task_id, completed=self.progress())
+
 
     def __str__(self):
         if self.goal is None:
@@ -91,12 +109,12 @@ class Habit:
             x = self.goal - self.progress()
             goal_status = f"цель: {self.goal} (осталось {x})"
 
-        progress_bar = ""
-        if self.goal and self.goal > 0:
-            bar_length  = 50
-            filled = int((self.progress() / self.goal)* bar_length )
-            empty = bar_length  - filled
-            progress_bar = f"\n📊 Прогресс: [{'█' * filled}{'░' * empty}] {self.progress()}/{self.goal}"
+        # progress_bar = ""
+        # if self.goal and self.goal > 0:
+        #     bar_length  = 50
+        #     filled = int((self.progress() / self.goal)* bar_length )
+        #     empty = bar_length  - filled
+        #     progress_bar = f"\n📊 Прогресс: [{'█' * filled}{'░' * empty}] {self.progress()}/{self.goal}"
 
 
 
@@ -109,17 +127,16 @@ class Habit:
         current_len, current_start = self.get_current_streak()
 
         if current_len == 0:
-            current_info = "📅 Текущий стрик: прерван"
+            current_info = "Текущий стрик: прерван"
         else:
-            current_info = f"📅 Текущий стрик: {current_len} дней (с {current_start})"
+            current_info = f"Текущий стрик: {current_len} дней (с {current_start})"
 
         if streak_len == 0:
-            streak_info = "📈 Стрик: пока нет подряд выполнений"
+            streak_info = "Стрик: пока нет подряд выполнений"
         else:
-            streak_info = f"📈 Стрик: {streak_len} дней (с {streak_start} по {streak_end})"
+            streak_info = f"Стрик: {streak_len} дней (с {streak_start} по {streak_end})"
 
-        return f"""\n{self.name}: выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}
-        {progress_bar}"""
+        return f"""Выполнено {self.progress()} раз(а) / цель: {goal_status}\n{streak_info}\n{current_info}\n"""
     
     def to_dict(self):
         return {
@@ -160,7 +177,16 @@ class HabitTracker:
         if not active:
             print("Нет активных привычек.")
         for habit in active:
+            habit.display_rich()
             print(habit)
+
+    def show_all_1(self):
+        active = [h for h in self.habits if not h.is_archived]
+        if not active:
+            print("Нет активных привычек.")
+        for habit in active:
+            habit.display_rich()
+
 
     def save_to_file(self, filename):
         data = [habit.to_dict() for habit in self.habits]

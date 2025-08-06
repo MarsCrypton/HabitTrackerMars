@@ -1,17 +1,22 @@
 from habit import HabitTracker
+from meals import MEAL_PLAN
+from datetime import date
+
+from rich.console import Console
+console = Console()
 
 FILENAME = "data.json"
 
 def main():
     while True:
-        print("\n=== Главное меню ===")
-        print("1. Сегодня")
+        console.print("\n[orange1]=== Главное меню ===[/orange1]")
+        print("1. Сводка на сегодня")
         print("2. Трекер привычек")
         print("0. Выход")
         choice = input("Выберите действие: ")
 
         if choice == "1":
-            pass
+            today()
 
         elif choice == "2":
             habit_menu()
@@ -28,7 +33,7 @@ def habit_menu():
     tracker.load_from_file(FILENAME)
 
     while True:
-        print("\n=== Трекер Привычек ===")
+        console.print("\n[orange1]=== Трекер Привычек ===[/orange1]")
         print("1. Добавить привычку")
         print("2. Отметить выполнение")
         print("3. Показать прогресс")
@@ -103,11 +108,31 @@ def habit_menu():
 
         elif choice == "0":
             tracker.save_to_file(FILENAME)
-            print("Привычки сохранены. Возврат в главное меню")
+            print("\nПривычки сохранены. Возврат в главное меню")
             break
 
         else:
-            print("Неверный ввод.")
+            print("\nНеверный ввод.")
+
+def today():
+    today = date.today()
+    day_of_month = today.day
+    meals = MEAL_PLAN
+
+    tracker = HabitTracker()
+    tracker.load_from_file(FILENAME)
+
+    if not meals:
+        print("\nФайл пуст или не найден!")
+
+    elif day_of_month > len(meals):
+        print("\nМеню не задано на этот день")
+
+    else:
+        console.print(f"\n[orange1]Меню на {today.strftime('%d.%m.%Y')}:[/orange1]\n{(meals[(day_of_month)-1])}\n")
+        tracker.show_all_1()
+        
+        # print(meals[(day_of_month)-1])
 
 if __name__ == "__main__":
     main()
