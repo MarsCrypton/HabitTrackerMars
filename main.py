@@ -1,14 +1,21 @@
 from habit import HabitTracker
-from meals import MEAL_PLAN
-from datetime import date
+from meals import MEAL_PLAN, parse_meal_line, parse_meal_line_tomorrow,print_meal_table
+from datetime import date, timedelta
+
+from workout_plan import plan
 
 from rich.console import Console
+from rich.table import Table
 console = Console()
 
 FILENAME = "data.json"
 
+# ----------  Вспомогательная дата старта ----------
+START_DATE = date(2025, 8, 12)  
+
 def main():
     while True:
+        console.print('[orange1]-----------------------------------------------------------------------------------------------[/orange1]')
         console.print("\n[orange1]=== Главное меню ===[/orange1]")
         print("1. Сводка на сегодня")
         print("2. Трекер привычек")
@@ -117,22 +124,53 @@ def habit_menu():
 def today():
     today = date.today()
     day_of_month = today.day
-    meals = MEAL_PLAN
+    day_today   = (today - START_DATE).days + 1
+    day_tomorrow = day_today + 1
+    
 
     tracker = HabitTracker()
     tracker.load_from_file(FILENAME)
 
-    if not meals:
+    breakfast, lunch, dinner = parse_meal_line()
+    tomorrow_breakfast,tomorrow_lunch,tomorrow_dinner = parse_meal_line_tomorrow()
+
+    if not MEAL_PLAN:
         print("\nФайл пуст или не найден!")
 
-    elif day_of_month > len(meals):
+    elif day_of_month > len(MEAL_PLAN):
         print("\nМеню не задано на этот день")
 
+    
+
     else:
-        console.print(f"\n[orange1]Меню на {today.strftime('%d.%m.%Y')}:[/orange1]\n{(meals[(day_of_month)-1])}\n")
+        console.print('[orange1]-----------------------------------------------------------------------------------------------[/orange1]')
+        print_meal_table(
+            breakfast, lunch, dinner,
+            tomorrow_breakfast, tomorrow_lunch, tomorrow_dinner
+        )
+        console.print("[orange1]Прогресс привычек[/orange1]")
         tracker.show_all_1()
+
+
+
+        console.print(f"\n[orange1]Спорт на сегодня (день {day_today}):[/orange1]")
+        if 1 <= day_today <= len(plan):
+            for d, ex, reps, sets in plan:
+                if d == day_today:
+                    print(f"  • {ex}: {reps} повт × {sets} подх")
+                    console.print('[orange1]-----------------------------------------------------------------------------------------------[/orange1]')
+                    
+        else:
+            print("  Программа завершена!")
+
+        console.print(f"\n[orange1]Спорт на завтра (день {day_tomorrow}):[/orange1]")
+        if 1 <= day_tomorrow <= len(plan):
+            for d, ex, reps, sets in plan:
+                if d == day_tomorrow:
+                    print(f"  • {ex}: {reps} повт × {sets} подх")
+        else:
+            print("  Программа завершена!")
         
-        # print(meals[(day_of_month)-1])
 
 if __name__ == "__main__":
     main()

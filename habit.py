@@ -1,6 +1,8 @@
 import json
 from datetime import date, datetime, timedelta
 import os
+from meals import MEAL_PLAN
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
@@ -171,7 +173,7 @@ class HabitTracker:
             if habit.name == name:
                 return habit
         return None
-
+#  исправить дублирующий код 
     def show_all(self):
         active = [h for h in self.habits if not h.is_archived]
         if not active:
@@ -179,13 +181,14 @@ class HabitTracker:
         for habit in active:
             habit.display_rich()
             print(habit)
-
+#  исправить дублирующий код 
     def show_all_1(self):
         active = [h for h in self.habits if not h.is_archived]
         if not active:
             print("Нет активных привычек.")
         for habit in active:
             habit.display_rich()
+
 
 
     def save_to_file(self, filename):
